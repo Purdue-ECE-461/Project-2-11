@@ -53,9 +53,9 @@ class Repository():
         else:
             log.log_url_type(url, "npm")
             package_name = urlparse(url)[2].split('/package/')[1]
-            url          = "https://api.npms.io/v2/package/{}".format(package_name)
-            response     = requests.get(url)
-            repo_url     = response.json()["collected"]['metadata']['links']['repository']
+            url          = "https://registry.npmjs.org/{}".format(package_name)
+            response     = requests.get(url).json()
+            repo_url     = response['repository']['url'].strip('git+')[:-1]
 
         url_components = urlparse(repo_url)
         self.repo      = self.github.get_repo(url_components[2][1:])
