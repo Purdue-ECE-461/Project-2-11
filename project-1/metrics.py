@@ -150,12 +150,11 @@ class DependencyMetric(Metric):
     def calculate_score(self, repo):
         num_dependencies       = self.__get_num_dependencies(repo)
         if num_dependencies == 0:
-            score = 1
+            score = 1.0
         else: 
-            score = 1 / (num_dependencies)
+            score = 1.0 / (num_dependencies)
 
         log.log_subscore_calculated(repo, score, self)
-        # print("dependent score: " + str(score))
         return score
 
     def __get_num_dependencies(self, repo):
