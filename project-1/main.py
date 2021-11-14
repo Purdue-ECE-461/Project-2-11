@@ -4,7 +4,7 @@ import os
 from github import Github
 
 from repository import Repository
-from metrics import LicenseMetric, RampUpMetric, CorrectnessMetric, BusFactorMetric, ResponsivenessMetric
+from metrics import LicenseMetric, RampUpMetric, CorrectnessMetric, BusFactorMetric, ResponsivenessMetric, DependencyMetric
 from score import Ranking 
 from log import log
 
@@ -76,11 +76,12 @@ def main():
 
     repositories = create_list_of_repositories(sys.argv[1], github)
     metrics      = [
-        RampUpMetric        ("RAMP_UP_SCORE"              , .3),
-        CorrectnessMetric   ("CORRECTNESS_SCORE"          , .4),
-        BusFactorMetric     ("BUS_FACTOR_SCORE"           , .8),
-        ResponsivenessMetric("RESPONSIVE_MAINTAINER_SCORE", .3),
-        LicenseMetric       ("LICENSE_SCORE"              , .5)
+        RampUpMetric        ("RAMP_UP_SCORE"              , .2),
+        CorrectnessMetric   ("CORRECTNESS_SCORE"          , .2),
+        BusFactorMetric     ("BUS_FACTOR_SCORE"           , .3),
+        ResponsivenessMetric("RESPONSIVE_MAINTAINER_SCORE", .1),
+        LicenseMetric       ("LICENSE_SCORE"              , .1), 
+        DependencyMetric    ("DEPENDENCY_SCORE"           , .2)
     ]
     log.log_metrics_created(metrics)
 

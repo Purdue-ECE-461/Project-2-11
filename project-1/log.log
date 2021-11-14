@@ -1,20 +1,21 @@
-2021-10-25 20:48:14.716670: [WARNING] No license found for repository 'cloudinary_npm'
-2021-10-25 20:48:14.718157: [TRACE  ] 'cloudinary_npm' repository is downloaded
-2021-10-25 20:48:19.996127: [TRACE  ] 'express' repository is downloaded
-2021-10-25 20:48:21.279619: [TRACE  ] 'nodist' repository is downloaded
-2021-10-25 20:48:29.382608: [WARNING] No dependencies found for repository 'lodash'
-2021-10-25 20:48:29.479319: [TRACE  ] 'lodash' repository is downloaded
-2021-10-25 20:48:36.154892: [TRACE  ] 'browserify' repository is downloaded
-2021-10-25 20:48:36.156005: [TRACE  ] Repository list is created, contains repositories: ['cloudinary_npm', 'express', 'nodist', 'lodash', 'browserify', ]
-2021-10-25 20:48:36.156999: [TRACE  ] Metrics are created, contains metrics: ['RAMP_UP_SCORE', 'CORRECTNESS_SCORE', 'BUS_FACTOR_SCORE', 'RESPONSIVE_MAINTAINER_SCORE', 'LICENSE_SCORE', ]
-2021-10-25 20:48:36.158440: [TRACE  ] Normalized scores for metric 'RAMP_UP_SCORE' are: ['cloudinary_npm': 0.237017310252996, 'express': 0.10386151797603196, 'nodist': 0.5499334221038615, 'lodash': 0.0, 'browserify': 1.0, ]
-2021-10-25 20:49:30.010631: [TRACE  ] Normalized scores for metric 'CORRECTNESS_SCORE' are: ['cloudinary_npm': 0.0, 'express': 1.0, 'nodist': 0.9333333333333333, 'lodash': 0.9333333333333333, 'browserify': 1.0, ]
-2021-10-25 20:49:30.011939: [TRACE  ] Normalized scores for metric 'BUS_FACTOR_SCORE' are: ['cloudinary_npm': 1.0, 'express': 0.7, 'nodist': 0.0, 'lodash': 0.4, 'browserify': 0.0, ]
-2021-10-25 20:49:30.015296: [TRACE  ] Normalized scores for metric 'RESPONSIVE_MAINTAINER_SCORE' are: ['cloudinary_npm': 0.7294497348249938, 'express': 0.31546866951437463, 'nodist': 0.44169642505725637, 'lodash': 1.0, 'browserify': 0.0, ]
-2021-10-25 20:49:30.016407: [TRACE  ] Normalized scores for metric 'LICENSE_SCORE' are: ['cloudinary_npm': 0.0, 'express': 1.0, 'nodist': 1.0, 'lodash': 0.0, 'browserify': 1.0, ]
-2021-10-25 20:49:30.017296: [TRACE  ] Repository 'cloudinary_npm' has overall score of 1.089940113523397
-2021-10-25 20:49:30.018048: [TRACE  ] Repository 'express' has overall score of 1.585799056247122
-2021-10-25 20:49:30.018797: [TRACE  ] Repository 'nodist' has overall score of 1.1708222874816687
-2021-10-25 20:49:30.019543: [TRACE  ] Repository 'lodash' has overall score of 0.9933333333333334
-2021-10-25 20:49:30.020261: [TRACE  ] Repository 'browserify' has overall score of 1.2
-2021-10-25 20:49:30.021185: [TRACE  ] final scores: [<score.Node object at 0x7f86ceb772b0>, <score.Node object at 0x7f86ceb77240>, <score.Node object at 0x7f86ceb771d0>, <score.Node object at 0x7f86ceb77a20>, <score.Node object at 0x7f86ceb77438>, ]
+2021-11-13 20:00:15.924900: [WARNING] No license found for repository 'cloudinary_npm'
+2021-11-13 20:00:15.926323: [TRACE  ] 'cloudinary_npm' repository is downloaded
+2021-11-13 20:00:21.025048: [TRACE  ] 'express' repository is downloaded
+2021-11-13 20:00:22.291751: [TRACE  ] 'nodist' repository is downloaded
+2021-11-13 20:00:30.696972: [WARNING] No dependencies found for repository 'lodash'
+2021-11-13 20:00:30.783590: [TRACE  ] 'lodash' repository is downloaded
+2021-11-13 20:00:37.333781: [TRACE  ] 'browserify' repository is downloaded
+2021-11-13 20:00:37.334934: [TRACE  ] Repository list is created, contains repositories: ['cloudinary_npm', 'express', 'nodist', 'lodash', 'browserify', ]
+2021-11-13 20:00:37.335655: [TRACE  ] Metrics are created, contains metrics: ['RAMP_UP_SCORE', 'CORRECTNESS_SCORE', 'BUS_FACTOR_SCORE', 'RESPONSIVE_MAINTAINER_SCORE', 'LICENSE_SCORE', 'DEPENDENCY_SCORE', ]
+2021-11-13 20:00:37.336700: [TRACE  ] Normalized scores for metric 'RAMP_UP_SCORE' are: ['cloudinary_npm': 0.237017310252996, 'express': 0.10386151797603196, 'nodist': 0.5499334221038615, 'lodash': 0.0, 'browserify': 1.0, ]
+2021-11-13 20:01:01.416563: [TRACE  ] Normalized scores for metric 'CORRECTNESS_SCORE' are: ['cloudinary_npm': 0.0, 'express': 1.0, 'nodist': 0.9333333333333333, 'lodash': 0.9333333333333333, 'browserify': 1.0, ]
+2021-11-13 20:01:01.418280: [TRACE  ] Normalized scores for metric 'BUS_FACTOR_SCORE' are: ['cloudinary_npm': 1.0, 'express': 0.7, 'nodist': 0.0, 'lodash': 0.3, 'browserify': 0.0, ]
+2021-11-13 20:01:01.420594: [TRACE  ] Normalized scores for metric 'RESPONSIVE_MAINTAINER_SCORE' are: ['cloudinary_npm': 0.6573401297694, 'express': 0.3321865913787833, 'nodist': 0.4365561106773622, 'lodash': 1.0, 'browserify': 0.0, ]
+2021-11-13 20:01:01.421586: [TRACE  ] Normalized scores for metric 'LICENSE_SCORE' are: ['cloudinary_npm': 0.0, 'express': 1.0, 'nodist': 1.0, 'lodash': 0.0, 'browserify': 1.0, ]
+2021-11-13 20:01:01.422484: [TRACE  ] Normalized scores for metric 'DEPENDENCY_SCORE' are: ['cloudinary_npm': 0.23404255319148937, 'express': 0.012765957446808512, 'nodist': 0.06382978723404256, 'lodash': 1.0, 'browserify': 0.0, ]
+2021-11-13 20:01:01.423347: [TRACE  ] Repository 'cloudinary_npm' has overall score of 0.3599459856658371
+2021-11-13 20:01:01.424235: [TRACE  ] Repository 'express' has overall score of 0.49654415422244647
+2021-11-13 20:01:01.425036: [TRACE  ] Repository 'nodist' has overall score of 0.45307491960198376
+2021-11-13 20:01:01.425848: [TRACE  ] Repository 'lodash' has overall score of 0.5466666666666666
+2021-11-13 20:01:01.426632: [TRACE  ] Repository 'browserify' has overall score of 0.5
+2021-11-13 20:01:01.427449: [TRACE  ] final scores: [<score.Node object at 0x7fac419ed940>, <score.Node object at 0x7fac419edb38>, <score.Node object at 0x7fac419ed908>, <score.Node object at 0x7fac419ed780>, <score.Node object at 0x7fac419edac8>, ]
