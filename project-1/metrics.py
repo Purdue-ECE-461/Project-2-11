@@ -120,8 +120,7 @@ class ResponsivenessMetric(Metric):
     def calculate_score(self, repo):
         ave_time_issue_is_open = self.__get_ave_time_issue_is_open(repo)
         num_dependencies       = self.__get_num_dependencies(repo)
-
-        score = -(ave_time_issue_is_open + num_dependencies)
+        score = -(ave_time_issue_is_open + (num_dependencies))
         
         log.log_subscore_calculated(repo, score, self)
         return score
@@ -147,3 +146,17 @@ class LicenseMetric(Metric):
         return score
 
     
+class DependencyMetric(Metric):
+    def calculate_score(self, repo):
+        num_dependencies       = self.__get_num_dependencies(repo)
+        if num_dependencies == 0:
+            score = 1
+        else: 
+            score = 1 / (num_dependencies)
+
+        log.log_subscore_calculated(repo, score, self)
+        # print("dependent score: " + str(score))
+        return score
+
+    def __get_num_dependencies(self, repo):
+        return repo.num_dependencies
