@@ -323,8 +323,7 @@ def test():
     # True if the test passes, and False if it fails. The number of tests passed and the total number of tests run
     # are displayed at the end. 
 
-    # token  = os.environ["GITHUB_TOKEN"] 
-    token  = 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
+    token  = os.environ["GITHUB_TOKEN"] 
     url    = 'https://github.com/ECE-461-Group-G/test'   
     github = Github(token)
     repo   = Repository(url, github)

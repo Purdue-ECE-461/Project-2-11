@@ -11,8 +11,11 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
-        token: ${{ secrets.GITHUB_TOKEN }}
     - name: Install dependencies
+      env: 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LOG_LEVEL: 1
+          LOG_FILE: log.log
       working-directory: project-1/
       run: |
         ./run install
