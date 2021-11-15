@@ -324,7 +324,7 @@ def test():
     # are displayed at the end. 
 
     # token  = os.environ["GITHUB_TOKEN"] 
-    token  = ${{ secrets.GITHUB_TOKEN }}
+    token  = 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
     url    = 'https://github.com/ECE-461-Group-G/test'   
     github = Github(token)
     repo   = Repository(url, github)
