@@ -11,11 +11,13 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
+        token: ${{ secrets.GITHUB_TOKEN }}
     - name: Install dependencies
       working-directory: project-1/
       run: |
         ./run install
     - name: Run Test
       working-directory: project-1/
+      
       run: |
         ./run test
