@@ -15,6 +15,7 @@ jobs:
       working-directory: project-1/
       run: |
         ./run install
-    - name: Run
+    - name: Run Test
+      working-directory: project-1/
       run: |
         ./run test
