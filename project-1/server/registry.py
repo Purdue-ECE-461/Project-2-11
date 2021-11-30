@@ -4,7 +4,7 @@ app = Flask(__name__)
 
 
 @app.route('/packages/',defaults = {'offset' : 1})
-@app.route('/packages/<int:offset>',methods = ['GET'])
+@app.route('/packages/<int:offset>',methods = ['GET']) #essential
 def getPackages(offset):
     return {"response":[offset]}
 
@@ -12,12 +12,12 @@ def getPackages(offset):
 def registryReset():
     return 'Uploading to Google Cloud Bucket'
 
-@app.route('/package/<id>', methods = ['DELETE'])
+@app.route('/package/<id>', methods = ['DELETE']) #essential
 def deletePackage(id):
     #Delete from package id
     return f'Deleting package {id}'
 
-@app.route('/package/<id>', methods = ['PUT'])
+@app.route('/package/<id>', methods = ['PUT']) 
 def updatePackage(id):
     return f'Updating package {id}'
 
@@ -25,23 +25,23 @@ def updatePackage(id):
 def packageRetrieve(id):
     return f'Retrieving package {id}'
 
-@app.route('/package', methods = ['POST'])
+@app.route('/package', methods = ['POST']) #essential
 def packageCreate():
     return 'Creating package'
 
-@app.route('/authenticate', methods = ['PUT'])
+@app.route('/authenticate', methods = ['PUT']) #essential
 def createAuthToken():
     return 'Creating Auth Token'
 
 @app.route('/package/byName/<name>', methods = ['GET'])
 def getPackageByName(name):
-    return f'Retrieving package {name}'
+    return f'Retrieving package {name}' #essential
 
 @app.route('/package/byName/<name>', methods = ['DELETE'])
-def deletePackageByName(name):
+def deletePackageByName(name): #essential
     return f'Deleting package {name}'
 
-@app.route('/package/<id>/rate', methods = ['POST'])
+@app.route('/package/<id>/rate', methods = ['POST']) #essential
 def rate(id):
     return f'Rating Package {id}'
 
