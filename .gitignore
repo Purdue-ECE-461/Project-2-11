@@ -1,6 +1,4 @@
-env
 input.txt
-env/virtualenv --version
 repositories/
 server/__pycache__/
 project-1/__pycache__/
