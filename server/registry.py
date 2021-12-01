@@ -1,5 +1,5 @@
 from flask import Flask, redirect,url_for, request
-from storage import uploadFiles,downloadFiles
+#from storage import uploadFiles,downloadFiles
 
 app = Flask(__name__)
 
@@ -28,8 +28,10 @@ def packageRetrieve(id):
 
 @app.route('/package', methods = ['POST']) #essential
 def packageCreate():
-    
-    return request.get_json()
+    res = request.get_json()
+    if not res:
+        return 'No JSON object found', 400;
+    return res
     #return 'Creating package'
 
 @app.route('/authenticate', methods = ['PUT']) #essential
@@ -52,4 +54,4 @@ def rate(id):
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
