@@ -22,6 +22,7 @@ jobs:
     - name: Run Test
       env: 
         GITHUB_TOKEN: ${{secrets.GH_ACCESS_TOKEN}}
+        APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
         LOG_LEVEL: 1
         LOG_FILE: log.log
       working-directory: project-1/
