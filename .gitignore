@@ -2,5 +2,6 @@ env
 input.txt
 env/virtualenv --version
 repositories/
-__pycache__/
+server/__pycache__/
+project-1/__pycache__/
 .env

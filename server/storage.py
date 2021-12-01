@@ -1,7 +1,10 @@
+# pip install --upgrade google-cloud-storage
+# for some reason, my pip install isn't working, I don't know why, try this on your computer
+
 import os
 from google.cloud import storage
 
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = "gcpKeys/ece461proj2trustmoduleregistry-4753c1f12dad.json"
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = "gcpKeys/googleCloudServiceKey.json"
 storage_client = storage.Client()
 
 
@@ -50,8 +53,6 @@ uploadFiles('file1Name', os.path.join(file_path, 'kitten.png'), 'data_bucket')
 '''
 Downloading from bucket
 '''
-# pip install --upgrade google-cloud-storage
-# for some reason, my pip install isn't working, I don't know why, try this on your computer
 
 def downloadFiles(blob_name, file_path, bucket_name):
     try:
