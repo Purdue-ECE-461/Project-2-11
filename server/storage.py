@@ -4,7 +4,7 @@
 import os
 from google.cloud import storage
 
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = "gcpKeys/googleCloudServiceKey.json"
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = APPLICATION_CREDENTIALS
 storage_client = storage.Client()
 
 
