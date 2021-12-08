@@ -6,7 +6,9 @@ import json
 
 
 app = Flask(__name__)
-cnx = connect(0,0,0)
+cnx = connect()
+if not cnx:
+    exit("Error connecting to database")
 
 @app.route('/packages/',defaults = {'offset' : 1})
 @app.route('/packages/<int:offset>',methods = ['GET']) #essential

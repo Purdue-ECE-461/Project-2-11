@@ -35,7 +35,7 @@ bucket_name: to upload to
 '''
 
 
-def uploadFiles(blob_name, file_path, bucket_name):
+def uploadFiles(blob_name, file_path):
     try:
         bucket = storage_client.get_bucket(bucket_name)
         blob = bucket.blob(blob_name)
@@ -46,15 +46,12 @@ def uploadFiles(blob_name, file_path, bucket_name):
         return False
 
 
-file_path = r'/Users/dhruvavish/Documents/ECE461/Project-2-11/project-1'
-uploadFiles('file1Name', os.path.join(file_path, r'kitten.png'), bucket_name)
-
 '''
 Downloading from bucket
 '''
 
 
-def downloadFiles(blob_name, file_path, bucket_name):
+def downloadFiles(blob_name, file_path):
     try:
         bucket = storage_client.get_bucket(bucket_name)
         blob = bucket.blob(blob_name)
@@ -65,6 +62,5 @@ def downloadFiles(blob_name, file_path, bucket_name):
     except Exception as e:
         print(e)
         return False
-
 
 
