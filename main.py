@@ -14,8 +14,8 @@ if not cnx:
 @app.route('/packages/<int:offset>',methods = ['GET']) #essential
 def getPackages(offset):
     cursor = cnx.cursor(buffered = True)
-    query = "SELECT * FROM package ORDER BY id LIMIT %s,10"
-    cursor.execute(query,(offset-1 if offset > 0 else 0,))
+    query = "SELECT * FROM package ORDER BY id LIMIT %s,10;"
+    cursor.execute(query,((offset-1)*10 if offset > 0 else 0,))
     resp = pd.DataFrame(cursor.fetchall())
     cnx.commit()
     resp.columns = cursor.column_names
@@ -168,5 +168,3 @@ if __name__ == '__main__':
     # http://flask.pocoo.org/docs/1.0/quickstart/#static-files. Once deployed,
     # App Engine itself will serve those files as configured in app.yaml.
     app.run(host='127.0.0.1', port=8080, debug=True)
-
-    rate(1)
