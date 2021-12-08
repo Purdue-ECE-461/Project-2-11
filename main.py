@@ -14,7 +14,7 @@ if not cnx:
 @app.route('/packages/<int:offset>',methods = ['GET']) #essential
 def getPackages(offset):
     cursor = cnx.cursor(buffered = True)
-    query = "SELECT * FROM package ORDER BY id LIMIT %s,10;"
+    query = "SELECT * FROM package ORDER BY id LIMIT %s,10"
     cursor.execute(query,(offset-1 if offset > 0 else 0,))
     resp = pd.DataFrame(cursor.fetchall())
     cnx.commit()
@@ -51,8 +51,8 @@ def updatePackage(id):
     if cursor.rowcount == 0:
         return 'Package not found', 400
     data = request.get_json()
-    query = "UPDATE package SET package_name = %s, version = %s WHERE id = %s;"
-    cursor.execute(query,(data['metadata']['Name'],data['metadata']['Version'],id))
+    query = "UPDATE package SET package_name = %s, version = %s, url = %s,  WHERE id = %s;"
+    cursor.execute(query,(data['metadata']['Name'],data['metadata']['Version'],data['data']['URL'],id))
     cnx.commit()
     return f'Updated package {id}',200
 
@@ -82,7 +82,8 @@ def packageCreate():
     cursor.execute("SELECT * FROM package WHERE package_name = %s AND version = %s",(req['metadata']['Name'],req['metadata']['Version']))
     if not cursor.fetchone():
         cursor.execute("""
-        INSERT INTO package (id, package_name, version) VALUES (id, %s, %s)""", (req['metadata']['Name'], req['metadata']['Version']))
+        INSERT INTO package (id, package_name, version, url, content, jsprogram) VALUES (id, %s,%s,%s,%s,%s)""",
+                (req['metadata']['Name'] , req['metadata']['Version'] , req['data']['URL'] , req['data']['Content'] , req['data']['JSProgram']))
         cnx.commit()
         cursor.execute("SELECT * FROM package WHERE package_name = %s AND version = %s",(req['metadata']['Name'],req['metadata']['Version']))
         resp = pd.DataFrame(cursor.fetchall())
@@ -111,7 +112,7 @@ def getPackageByName(name):
     packageData.columns = cursor.column_names
     print(packageData)
     resp = packageData.to_json(orient='records')
-    resp = resp[1:-1] #remove first and last element
+    resp = resp[1:-1] #remove first and last element 
     resp = "{" + resp + "}"
     print(resp,type(resp))
     return resp, 200
@@ -130,7 +131,7 @@ def deletePackageByName(name): #essential
 @app.route('/package/<id>/rate', methods = ['POST']) #essential
 def rate(id):
     connection = connect()
-
+    
     with connection.cursor() as cursor:
         cursor.execute(("select * from package"))
 
@@ -167,4 +168,5 @@ if __name__ == '__main__':
     # http://flask.pocoo.org/docs/1.0/quickstart/#static-files. Once deployed,
     # App Engine itself will serve those files as configured in app.yaml.
     app.run(host='127.0.0.1', port=8080, debug=True)
+
     rate(1)
