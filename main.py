@@ -15,7 +15,7 @@ def getPackages(offset):
 @app.route('/reset', methods = ['DELETE'])
 def registryReset():
     return 'Uploading to Google Cloud Bucket'
-'''
+
 @app.route('/package/<id>', methods = ['DELETE']) #essential
 def deletePackage(id):
     #Delete from package id
@@ -43,20 +43,16 @@ def createAuthToken():
 
 @app.route('/package/byName/<name>', methods = ['GET'])
 def getPackageByName(name):
-<<<<<<< HEAD
-    
-    return f'Retrieved package {name}' #essential
-=======
     """
     select * from database where packageName == Name
     """
     return f'Retrieving package {name}' #essential
->>>>>>> 96103a6 (api rate changes)
+
 
 @app.route('/package/byName/<name>', methods = ['DELETE'])
 def deletePackageByName(name): #essential
     return f'Deleting package {name}'
-'''
+
 @app.route('/package/<id>/rate', methods = ['POST']) #essential
 def rate(id):
     connection = connect()
