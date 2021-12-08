@@ -1,10 +1,6 @@
 from flask import Flask, render_template,redirect,url_for, request
-#from storage import uploadFiles,downloadFiles
-<<<<<<< HEAD
+from storage import uploadFiles,downloadFiles
 from sqlconnector import connect
-=======
-from storage import connect
->>>>>>> fc92c090ec44fed4331b3ca62ed610ba1d0e5145
 
 
 app = Flask(__name__)
@@ -39,10 +35,17 @@ def packageCreate():
     if not req:
         return 'No JSON object found', 400;
     cnx = connect(0,0,0)
-    cursor = cnx.cursor()
-    cursor.execute("INSERT INTO package (id, package_name, version) VALUES (id, %s, %s)", (req['metadata']['Name'], req['metadata']['Version']))
-    cnx.commit()
-    return req
+    cursor = cnx.cursor(buffered = True)
+    cursor.execute("SELECT * FROM package WHERE package_name = %s AND version = %s",(req['metadata']['Name'],req['metadata']['Version']))
+    if not cursor.fetchone():
+        cursor.execute("""
+        INSERT INTO package (id, package_name, version) VALUES (id, %s, %s)""", (req['metadata']['Name'], req['metadata']['Version']))
+        cnx.commit()
+        cursor.close()
+        return req, 400
+    else:
+        cursor.close()
+        return "Package already exists", 400
     #return 'Creating package'
 
 @app.route('/authenticate', methods = ['PUT']) #essential
