@@ -67,7 +67,4 @@ def downloadFiles(blob_name, file_path, bucket_name):
         return False
 
 
-def connect():
-    socket = f'/cloudsql/{instance_name}'
-    connection = pymsql.connect(user='root', password='2pjHC9svdbauJxFw', unix_socket=socket, db='package-info')
-    return connection
+
