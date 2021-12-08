@@ -1,6 +1,6 @@
 from flask import Flask, render_template,redirect,url_for, request
 #from storage import uploadFiles,downloadFiles
-
+from sqlconnector import connect
 
 
 app = Flask(__name__)
@@ -31,10 +31,14 @@ def packageRetrieve(id):
 
 @app.route('/package', methods = ['POST']) #essential
 def packageCreate():
-    res = request.get_json()
-    if not res:
+    req = request.get_json()
+    if not req:
         return 'No JSON object found', 400;
-    return res
+    cnx = connect(0,0,0)
+    cursor = cnx.cursor()
+    cursor.execute("INSERT INTO package (id, package_name, version) VALUES (id, %s, %s)", (req['metadata']['Name'], req['metadata']['Version']))
+    cnx.commit()
+    return req
     #return 'Creating package'
 
 @app.route('/authenticate', methods = ['PUT']) #essential
