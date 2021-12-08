@@ -15,7 +15,7 @@ if not cnx:
 def getPackages(offset):
     cursor = cnx.cursor(buffered = True)
     query = "SELECT * FROM package ORDER BY id LIMIT %s,10;"
-    cursor.execute(query,(offset-1 if offset > 0 else 0,))
+    cursor.execute(query,((offset-1)*10 if offset > 0 else 0,))
     resp = pd.DataFrame(cursor.fetchall())
     cnx.commit()
     resp.columns = cursor.column_names
