@@ -4,7 +4,7 @@
 import os
 from google.cloud import storage
 
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = r'server/service.json'
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = r'service.json'
 storage_client = storage.Client()
 instance_name = "ece461proj2trustmoduleregistry:us-east1:package-info"
 '''

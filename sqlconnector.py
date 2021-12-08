@@ -9,7 +9,10 @@ import sys
 #### Establish Connetion ####
 
 def connect(dbpass,dbhost,dbname):
-    
+
+    cnx = mysql.connector.connect(user='root', password='2pjHC9svdbauJxFw', host='35.229.85.24', 
+                                database='registry')
+
 
     #### Connection Established ####
     print("Connection Established")
