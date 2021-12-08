@@ -1,12 +1,15 @@
 from flask import Flask, render_template,redirect,url_for, request
 #from storage import uploadFiles,downloadFiles
 
+
+
 app = Flask(__name__)
 
 
 @app.route('/packages/',defaults = {'offset' : 1})
 @app.route('/packages/<int:offset>',methods = ['GET']) #essential
 def getPackages(offset):
+
     return {"response":[offset]}
 
 @app.route('/reset', methods = ['DELETE'])
@@ -40,7 +43,8 @@ def createAuthToken():
 
 @app.route('/package/byName/<name>', methods = ['GET'])
 def getPackageByName(name):
-    return f'Retrieving package {name}' #essential
+    
+    return f'Retrieved package {name}' #essential
 
 @app.route('/package/byName/<name>', methods = ['DELETE'])
 def deletePackageByName(name): #essential
