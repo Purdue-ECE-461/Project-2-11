@@ -1,6 +1,10 @@
 from flask import Flask, render_template,redirect,url_for, request
 #from storage import uploadFiles,downloadFiles
+<<<<<<< HEAD
 from sqlconnector import connect
+=======
+from storage import connect
+>>>>>>> fc92c090ec44fed4331b3ca62ed610ba1d0e5145
 
 
 app = Flask(__name__)
@@ -47,8 +51,11 @@ def createAuthToken():
 
 @app.route('/package/byName/<name>', methods = ['GET'])
 def getPackageByName(name):
-    
-    return f'Retrieved package {name}' #essential
+    """
+    select * from database where packageName == Name
+    """
+    return f'Retrieving package {name}' #essential
+
 
 @app.route('/package/byName/<name>', methods = ['DELETE'])
 def deletePackageByName(name): #essential
@@ -56,7 +63,20 @@ def deletePackageByName(name): #essential
 
 @app.route('/package/<id>/rate', methods = ['POST']) #essential
 def rate(id):
-    return f'Rating Package {id}'
+    connection = connect()
+
+    with connection.cursor() as cursor:
+        cursor.execute(("select * from package"))
+
+        frame = pd.DataFrame(cursor.fetchall())
+        print(frame.head)
+
+    """
+    Get url
+    run through project 1,
+    get the scores
+    """
+    return 'Rating Package {id}'
 
 
 
@@ -81,3 +101,4 @@ if __name__ == '__main__':
     # http://flask.pocoo.org/docs/1.0/quickstart/#static-files. Once deployed,
     # App Engine itself will serve those files as configured in app.yaml.
     app.run(host='127.0.0.1', port=8080, debug=True)
+    rate(1)
