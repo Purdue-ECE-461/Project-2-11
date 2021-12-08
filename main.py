@@ -15,7 +15,7 @@ def getPackages(offset):
 @app.route('/reset', methods = ['DELETE'])
 def registryReset():
     return 'Uploading to Google Cloud Bucket'
-
+'''
 @app.route('/package/<id>', methods = ['DELETE']) #essential
 def deletePackage(id):
     #Delete from package id
@@ -43,16 +43,36 @@ def createAuthToken():
 
 @app.route('/package/byName/<name>', methods = ['GET'])
 def getPackageByName(name):
+<<<<<<< HEAD
     
     return f'Retrieved package {name}' #essential
+=======
+    """
+    select * from database where packageName == Name
+    """
+    return f'Retrieving package {name}' #essential
+>>>>>>> 96103a6 (api rate changes)
 
 @app.route('/package/byName/<name>', methods = ['DELETE'])
 def deletePackageByName(name): #essential
     return f'Deleting package {name}'
-
+'''
 @app.route('/package/<id>/rate', methods = ['POST']) #essential
 def rate(id):
-    return f'Rating Package {id}'
+    connection = connect()
+
+    with connection.cursor() as cursor:
+        cursor.execute(("select * from package"))
+
+        frame = pd.DataFrame(cursor.fetchall())
+        print(frame.head)
+
+    """
+    Get url
+    run through project 1,
+    get the scores
+    """
+    return 'Rating Package {id}'
 
 
 
@@ -77,3 +97,4 @@ if __name__ == '__main__':
     # http://flask.pocoo.org/docs/1.0/quickstart/#static-files. Once deployed,
     # App Engine itself will serve those files as configured in app.yaml.
     app.run(host='127.0.0.1', port=8080, debug=True)
+    rate(1)
