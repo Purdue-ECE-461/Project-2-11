@@ -65,7 +65,7 @@ class CorrectnessMetric(Metric):
         path = self.__download_repository_to_local(repo)
 
         num_issues = 0 
-        with open("project-1/semgrep.txt", "r") as filePtr:
+        with open("semgrep.txt", "r") as filePtr:
             for line in filePtr.readlines():
                 if line.endswith("\n"):
                     line = line[:-1]
