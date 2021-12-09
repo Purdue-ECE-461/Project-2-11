@@ -2,6 +2,7 @@
 # for some reason, my pip install isn't working, I don't know why, try this on your computer
 
 import os
+import base64
 from google.cloud import storage
 
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = r'service.json'
@@ -35,7 +36,8 @@ bucket_name: to upload to
 '''
 
 
-def uploadFiles(blob_name, file_path):
+def uploadFiles(blob_name, byte64_data):
+    
     try:
         bucket = storage_client.get_bucket(bucket_name)
         blob = bucket.blob(blob_name)

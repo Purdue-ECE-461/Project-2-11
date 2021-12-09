@@ -1,11 +1,14 @@
-from flask import Flask, render_template,redirect,url_for, request
+from flask import Flask, render_template, redirect, url_for, request, session
+from flask_executor import Executor
 from storage import uploadFiles,downloadFiles
 from sqlconnector import connect
+import base64
 import pandas as pd
 import json
 
 
 app = Flask(__name__)
+executor = Executor(app)
 cnx = connect()
 if not cnx:
     exit("Error connecting to database")
@@ -36,7 +39,7 @@ def registryReset():
 def deletePackage(id):
     #Delete from package id
     cursor = cnx.cursor(buffered = True)
-    cursor.execute("DELETE FROM package WHERE id = %s",(id,))
+    cursor.execute("DELETE FROM package WHERE package_id = %s",(id,))
     cursor.execute("SELECT ROW_COUNT()")
     cnx.commit()
     if cursor.fetchone()[0] == 0:
@@ -47,19 +50,19 @@ def deletePackage(id):
 def updatePackage(id):
     #Update package
     cursor = cnx.cursor(buffered = True)
-    cursor.execute("SELECT * FROM package WHERE id = %s",(id,))
+    cursor.execute("SELECT * FROM package WHERE package_id = %s",(id,))
     if cursor.rowcount == 0:
         return 'Package not found', 400
     data = request.get_json()
-    query = "UPDATE package SET package_name = %s, version = %s, url = %s,  WHERE id = %s;"
-    cursor.execute(query,(data['metadata']['Name'],data['metadata']['Version'],data['data']['URL'],id))
+    query = "UPDATE package SET package_name = %s, version = %s, url = %s, jsprogram = %s  WHERE package_id = %s;"
+    cursor.execute(query,(data['metadata']['Name'],data['metadata']['Version'],data['data']['URL'],data['data']['JSProgram'],id))
     cnx.commit()
     return f'Updated package {id}',200
 
 @app.route('/package/<id>', methods = ['GET'])
 def packageRetrieve(id):
     cursor = cnx.cursor(buffered = True)
-    cursor.execute("SELECT * FROM package WHERE id = %s",(id,))
+    cursor.execute("SELECT * FROM package WHERE package_id = %s",(id,))
     packageData = pd.DataFrame(cursor.fetchall())
     if packageData.empty:
         return 'Package not found', 400
@@ -79,20 +82,23 @@ def packageCreate():
         return 'Invalid Request', 400
     cursor = cnx.cursor(buffered = True)
     #Check if package exists
-    cursor.execute("SELECT * FROM package WHERE package_name = %s AND version = %s",(req['metadata']['Name'],req['metadata']['Version']))
+    cursor.execute("SELECT * FROM package WHERE package_id = %s",(req['metadata']['ID'],))
     if not cursor.fetchone():
         cursor.execute("""
-        INSERT INTO package (id, package_name, version, url, content, jsprogram) VALUES (id, %s,%s,%s,%s,%s)""",
-                (req['metadata']['Name'] , req['metadata']['Version'] , req['data']['URL'] , req['data']['Content'] , req['data']['JSProgram']))
+        INSERT INTO package (id, package_id, package_name, version, url, jsprogram) VALUES (id,%s,%s,%s,%s,%s)""",
+                (req['metadata']['ID'],req['metadata']['Name'] , req['metadata']['Version'] , req['data']['URL'] , req['data']['JSProgram']))
         cnx.commit()
         cursor.execute("SELECT * FROM package WHERE package_name = %s AND version = %s",(req['metadata']['Name'],req['metadata']['Version']))
         resp = pd.DataFrame(cursor.fetchall())
         resp.columns = cursor.column_names
         resp = resp.to_json(orient='records')
+
+        
+        executor.submit(uploadFiles,req['metadata']['ID'],)
         return resp[1:-1], 201
     else:
         cursor.close()
-        return "Package already exists", 403
+        return "Package ID already exists. Choose a different ID.", 403
     #return 'Creating package'
 
 @app.route('/authenticate', methods = ['PUT']) #essential
@@ -128,22 +134,24 @@ def deletePackageByName(name): #essential
         return 'Package not found', 400
     return 'Package Deleted',200
 
-@app.route('/package/<id>/rate', methods = ['POST']) #essential
+@app.route('/package/<id>/rate', methods = ['GET']) #essential
 def rate(id):
-    connection = connect()
     
-    with connection.cursor() as cursor:
-        cursor.execute(("select * from package"))
+    cursor = cnx.cursor(buffered = True)
+    cursor.execute(("SELECT * FROM package WHERE package_id = %s"),(id,))
 
-        frame = pd.DataFrame(cursor.fetchall())
-        print(frame.head)
-
+    frame = pd.DataFrame(cursor.fetchall())
+    if frame.empty:
+        return 'Package not found', 400
+    frame.columns = cursor.column_names
+    resp = frame.to_json(orient='records')
+    return resp,200
     """
     Get url
     run through project 1,
     get the scores
     """
-    return 'Rating Package {id}'
+    
 
 
 
