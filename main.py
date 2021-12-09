@@ -5,6 +5,8 @@ from sqlconnector import connect
 import base64
 import pandas as pd
 import json
+import jwt
+
 
 
 app = Flask(__name__)
@@ -101,9 +103,36 @@ def packageCreate():
         return "Package ID already exists. Choose a different ID.", 403
     #return 'Creating package'
 
+'''
+@app.before_request
+def validate_token():
+    print("before_request is running!")
+'''
+
+
 @app.route('/authenticate', methods = ['PUT']) #essential
 def createAuthToken():
-    return 'Creating Auth Token'
+    try:
+        user_id = request.get_json()["User"]["name"]
+        pwd = request.get_json()["Secret"]["password"]
+        admin = request.get_json()["User"]["isAdmin"]
+        payload = {
+            'sub': pwd,
+            'name': user_id,
+            'admin': admin
+        }
+        print(pwd, admin, app.config.get('SECRET_KEY') )
+        code = jwt.encode(
+            payload,
+           'secret',
+            algorithm='HS256'
+        )
+
+        return code
+    except Exception as e:
+        print(e)
+        return e
+
 
 @app.route('/package/byName/<name>', methods = ['GET'])
 def getPackageByName(name):
@@ -146,14 +175,7 @@ def rate(id):
     frame.columns = cursor.column_names
     resp = frame.to_json(orient='records')
     return resp,200
-    """
-    Get url
-    run through project 1,
-    get the scores
-    """
     
-
-
 
 @app.route('/')
 def root():
