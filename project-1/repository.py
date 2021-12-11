@@ -27,7 +27,7 @@ class Repository():
 
     def __init__(self, url, github):
         self.github = github
-        # print(url)
+        print("URL: " + url)
         self.__set_github_repo(url)
 
         self.num_stars         = self.__fetch_num_stars()

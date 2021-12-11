@@ -6,10 +6,7 @@ sys.path.insert(0, '/home/mert/Desktop/Berkay/Project-2-11/project-1/')
 from proj1 import *
  
 
-# def testt():
-#     with open("dict.txt") as fptr:
-#         dict_resp = json.loads(fptr.read())
-#     print(dict_resp) 
+ 
 
 def run_scoring():
     main(['package_url.txt'])
@@ -20,7 +17,7 @@ def write_url(url):
 
 def ingestibilty(dict):
     values = dict.values()
-    final_score = 0
+    final_score = sum(values)
     if final_score > 0.5:
         return True
     else:
