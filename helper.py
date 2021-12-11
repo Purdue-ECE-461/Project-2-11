@@ -18,6 +18,8 @@ def write_url(url):
 def ingestibilty(dict):
     values = dict.values()
     final_score = sum(values)
+    # final_score = 0
+
     if final_score > 0.5:
         return True
     else:

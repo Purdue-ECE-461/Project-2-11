@@ -196,10 +196,23 @@ def rate(id):
     
     frame = pd.DataFrame(cursor.fetchall())
     if frame.empty:
-        return 'Package not found', 400
+        return 'No such package', 400
     frame.columns = cursor.column_names
     resp = frame.to_json(orient='records')
-    return resp,200
+    req = json.loads(resp)
+    a = req[0]['ramp_up']
+    dict_ratings = {'RampUp' : req[0]['ramp_up'],
+                    'Correctness' : req[0]['correctness'], 
+                    'BusFactor' : req[0]['bus_factor'], 
+                    'ResponsiveMaintainer' : req[0]['responsiveness'], 
+                    'LicenseScore' : req[0]['license'],
+                    'GoodPinningPractice' : req[0]['dependancy']}
+    isIngestible = ingestibilty(dict_ratings)
+
+    if isIngestible is not True:
+        return 'The package rating system failed. Package not ingestible or rating failed.', 500
+
+    return dict_ratings,200
     
 
 @app.route('/')
