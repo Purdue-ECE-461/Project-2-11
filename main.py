@@ -74,7 +74,7 @@ def updatePackage(id):
 
 @app.route('/package/<id>', methods = ['GET'])
 def packageRetrieve(id):
-    cursor = cnx.cursor(buffered = True)    
+    cursor = cnx.cursor(buffered = True)
     cursor.execute("SELECT * FROM package WHERE package_id = %s",(id,))
     packageData = pd.DataFrame(cursor.fetchall())
     if packageData.empty:
