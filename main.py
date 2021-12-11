@@ -5,12 +5,7 @@ from sqlconnector import connect
 import base64
 import pandas as pd
 import json
-<<<<<<< HEAD
 from helper import *
-=======
-import jwt
-
->>>>>>> 231ad0a2048aeec4137e68dd266effbc70d45216
 
 
 app = Flask(__name__)
@@ -62,12 +57,24 @@ def updatePackage(id):
     data = request.get_json()
     query = "UPDATE package SET package_name = %s, version = %s, url = %s, jsprogram = %s  WHERE package_id = %s;"
     cursor.execute(query,(data['metadata']['Name'],data['metadata']['Version'],data['data']['URL'],data['data']['JSProgram'],id))
+
+    write_url(data['data']['URL'])
+    run_scoring()
+    with open("dict.txt") as fptr:
+        dict_resp = json.loads(fptr.read())
+    isIngest = ingestibilty(dict_resp)
+    if (isIngest) is not True:
+        cursor.close()
+        return "Ingestibility failed. Package was not uploaded to database.", 403
+    cnx.commit()
+    query = "UPDATE package SET ramp_up = %s, correctness = %s, bus_factor = %s, responsiveness = %s, license = %s, dependancy = %s, overall = %s  WHERE package_id = %s;"
+    cursor.execute(query,(dict_resp['ramp_up'],dict_resp['correctness'],dict_resp['bus_factor'],dict_resp['responsiveness'],dict_resp['license'],dict_resp['dependency'],dict_resp['score'], data['metadata']['ID']))#dict_resp['correctness'],dict_resp['bus_factor'],dict_resp['responsiveness'],dict_resp['license'],dict_resp['dependency'],dict_resp['score'],id))    
     cnx.commit()
     return f'Updated package {id}',200
 
 @app.route('/package/<id>', methods = ['GET'])
 def packageRetrieve(id):
-    cursor = cnx.cursor(buffered = True)
+    cursor = cnx.cursor(buffered = True)    
     cursor.execute("SELECT * FROM package WHERE package_id = %s",(id,))
     packageData = pd.DataFrame(cursor.fetchall())
     if packageData.empty:
@@ -103,16 +110,8 @@ def packageCreate():
         if (isIngest) is not True:
             cursor.close()
             return "Ingestibility failed. Package was not uploaded to database.", 403
-        print(isIngest)
-        print(dict_resp)
-    
-        # cursor.execute("""
-        # INSERT INTO package (ramp_up, correctness, bus_factor, responsiveness, license, dependancy, overall) VALUES (%s,%s,%s,%s,%s,%s,%s)""",
-        #         (req['metadata']['ID'],req['metadata']['Name'] , req['metadata']['Version'] , req['data']['URL'] , req['data']['JSProgram']))
+
         query = "UPDATE package SET ramp_up = %s, correctness = %s, bus_factor = %s, responsiveness = %s, license = %s, dependancy = %s, overall = %s  WHERE package_id = %s;"
-        #, correctness = %d, bus_factor = %d, responsiveness = %d, license = %d, dependancy = %d, overall = %d 
-        # cursor.execute(query,('0.0','0.0','0.0','0.0','0.0','0.0','0.0',id))
-        print(type(dict_resp['ramp_up']))
         cursor.execute(query,(dict_resp['ramp_up'],dict_resp['correctness'],dict_resp['bus_factor'],dict_resp['responsiveness'],dict_resp['license'],dict_resp['dependency'],dict_resp['score'], req['metadata']['ID']))#dict_resp['correctness'],dict_resp['bus_factor'],dict_resp['responsiveness'],dict_resp['license'],dict_resp['dependency'],dict_resp['score'],id))
         
         cnx.commit()
@@ -194,7 +193,7 @@ def rate(id):
     
     cursor = cnx.cursor(buffered = True)
     cursor.execute(("SELECT * FROM package WHERE package_id = %s"),(id,))
-
+    
     frame = pd.DataFrame(cursor.fetchall())
     if frame.empty:
         return 'Package not found', 400
