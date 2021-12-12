@@ -1,11 +1,16 @@
-from flask import Flask, render_template, redirect, url_for, request, session
+from flask import Flask, render_template, redirect, url_for, request, session, make_response, jsonify
 from flask_executor import Executor
 from storage import uploadFiles,downloadFiles
 from sqlconnector import connect
 import base64
 import pandas as pd
+import jwt
+import datetime
 import json
+from functools import wraps
 from helper import *
+
+
 
 
 app = Flask(__name__)
@@ -14,8 +19,44 @@ cnx = connect()
 if not cnx:
     exit("Error connecting to database")
 
+app.config['SECRET_KEY'] = 'testkey'
+
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = request.headers.get('X-Authorization')
+
+        if not token:
+            return "Token is Missing"
+
+        try: 
+            data = jwt.decode(token, app.config['SECRET_KEY'])
+        except:
+            return "Token Invalid"
+        
+        return f(*args, **kwargs)
+    return decorated
+
+@app.route('/authenticate', methods = ['PUT']) #essential
+def createAuthToken():
+    
+    user_id = request.get_json()["User"]["name"]
+    pwd = request.get_json()["Secret"]["password"]
+    admin = request.get_json()["User"]["isAdmin"]
+
+    auth = request.authorization
+
+    if admin:
+        print("aaaa")
+        token = jwt.encode({'user' : user_id, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, app.config['SECRET_KEY'])
+        return jsonify({'token' : token.decode("UTF-8")})
+
+    return "Authentication failed" , 401
+
+
 @app.route('/packages/',defaults = {'offset' : 1})
 @app.route('/packages/<int:offset>',methods = ['GET']) #essential
+@token_required
 def getPackages(offset):
     cursor = cnx.cursor(buffered = True)
     query = "SELECT * FROM package ORDER BY id LIMIT %s,10;"
@@ -28,6 +69,7 @@ def getPackages(offset):
     return resp
 
 @app.route('/reset', methods = ['DELETE'])
+@token_required
 def registryReset():
     cursor = cnx.cursor(buffered = True)
     query = "DELETE FROM package;"
@@ -37,6 +79,7 @@ def registryReset():
     return 'Reset Registry'
 
 @app.route('/package/<id>', methods = ['DELETE']) #essential
+@token_required
 def deletePackage(id):
     #Delete from package id
     cursor = cnx.cursor(buffered = True)
@@ -48,6 +91,7 @@ def deletePackage(id):
     return 'Package Deleted',200
 
 @app.route('/package/<id>', methods = ['PUT']) 
+@token_required
 def updatePackage(id):
     #Update package
     cursor = cnx.cursor(buffered = True)
@@ -73,6 +117,7 @@ def updatePackage(id):
     return f'Updated package {id}',200
 
 @app.route('/package/<id>', methods = ['GET'])
+@token_required
 def packageRetrieve(id):
     cursor = cnx.cursor(buffered = True)
     cursor.execute("SELECT * FROM package WHERE package_id = %s",(id,))
@@ -87,7 +132,10 @@ def packageRetrieve(id):
     print(resp,type(resp))
     return resp, 200
 
+
+
 @app.route('/package', methods = ['POST']) #essential
+@token_required
 def packageCreate():
     ''' upload file to gcp storage bucket'''
     req = request.get_json()
@@ -128,38 +176,9 @@ def packageCreate():
         return "Package ID already exists. Choose a different ID.", 403
     #return 'Creating package'
 
-'''
-@app.before_request
-def validate_token():
-    print("before_request is running!")
-'''
-
-
-@app.route('/authenticate', methods = ['PUT']) #essential
-def createAuthToken():
-    try:
-        user_id = request.get_json()["User"]["name"]
-        pwd = request.get_json()["Secret"]["password"]
-        admin = request.get_json()["User"]["isAdmin"]
-        payload = {
-            'sub': pwd,
-            'name': user_id,
-            'admin': admin
-        }
-        print(pwd, admin, app.config.get('SECRET_KEY') )
-        code = jwt.encode(
-            payload,
-           'secret',
-            algorithm='HS256'
-        )
-
-        return code
-    except Exception as e:
-        print(e)
-        return e
-
 
 @app.route('/package/byName/<name>', methods = ['GET'])
+@token_required
 def getPackageByName(name):
     """
     select * from database where packageName == Name
@@ -179,6 +198,7 @@ def getPackageByName(name):
 
 
 @app.route('/package/byName/<name>', methods = ['DELETE'])
+@token_required
 def deletePackageByName(name): #essential
     cursor = cnx.cursor(buffered = True)
     cursor.execute("DELETE FROM package WHERE package_name = %s",(name,))
@@ -189,6 +209,7 @@ def deletePackageByName(name): #essential
     return 'Package Deleted',200
 
 @app.route('/package/<id>/rate', methods = ['GET']) #essential
+@token_required
 def rate(id):
     
     cursor = cnx.cursor(buffered = True)
