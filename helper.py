@@ -1,7 +1,8 @@
 import sys
 
 from numpy import true_divide
-sys.path.insert(0, '/home/mert/Desktop/Berkay/Project-2-11/project-1/')
+pre_path = sys.path[0]
+sys.path.insert(0, pre_path + '/project-1/')
 # sys.path.append('/home/mert/Desktop/Berkay/Project-2-11/project-1/')
 from proj1 import *
  
@@ -12,6 +13,8 @@ def run_scoring():
     main(['package_url.txt'])
 
 def write_url(url):
+
+
     with open('package_url.txt', 'w') as url_file:
         url_file.write(str(url))
 
