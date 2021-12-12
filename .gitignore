@@ -1,6 +1,6 @@
 input.txt
 repositories/
-server/__pycache__
+__pycache__
 project-1/__pycache__/
 .env
 ece461proj2trustmoduleregistry-53ce420a94d1.json
