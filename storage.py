@@ -59,12 +59,13 @@ Downloading from bucket
 
 def downloadFiles(blob_name):
 
+    print(blob_name)
+
     try:
         bucket = storage_client.get_bucket(bucket_name)
         blob = bucket.blob(blob_name)
         with open(blob_name+".zip", "wb") as fin:
             storage_client.download_blob_to_file(blob, fin)
-            print("Downloaded")
         with open(blob_name+".zip", "rb") as fin:
             str = fin.read()
         with open(blob_name+".zip", "wb") as fout:

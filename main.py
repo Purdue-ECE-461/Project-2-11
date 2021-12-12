@@ -1,5 +1,5 @@
 from os import sendfile
-from flask import Flask, render_template, redirect, url_for, request, session, send_from_directory,make_response,jsonify,send_file
+from flask import Flask, render_template, redirect, url_for, request, session, send_file,make_response,jsonify
 from flask_executor import Executor
 from storage import uploadFiles,downloadFiles
 from sqlconnector import connect
@@ -21,20 +21,19 @@ if not cnx:
     exit("Error connecting to database")
 app.config['PROPAGATE_EXCEPTIONS'] = True
 
-app.config['SECRET_KEY'] = 'testkey'
-app.config['TESTSECRET'] = 'testkey'
+app.config['TESTKEY'] = 'testkey'
+
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         token = request.headers.get('X-Authorization')
-
         if not token:
             return "Token is Missing"
 
         try:
-            data = jwt.decode(token, app.config['SECRET_KEY'],algorithms=['HS256'])
-        except Exception as e:
-            print(e)
+            if(token):
+                data = jwt.decode(token, app.config['TESTKEY'], algorithms=['HS256'])
+        except:
             return "Token Invalid"
         
         return f(*args, **kwargs)
@@ -51,7 +50,7 @@ def createAuthToken():
 
     if admin:
         print("aaaa")
-        token = jwt.encode({'user' : user_id, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, app.config['SECRET_KEY'],'HS256').decode('utf-8')
+        token = jwt.encode({'user' : user_id, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, app.config['TESTKEY'])
         return jsonify({'token' : token})
 
     return "Authentication failed" , 401
@@ -132,8 +131,9 @@ def packageRetrieve(id):
     resp = resp[1:-1] #remove first and last element
     resp = "{" + resp + "}"
     fname = downloadFiles(packageData['package_id'][0])
-    return send_file(fname, as_attachment=True)
-
+    if fname == False:
+        return "Could not find file"
+    return send_file(path_or_file = fname,mimetype="zip")
     return resp, 200
 
 
