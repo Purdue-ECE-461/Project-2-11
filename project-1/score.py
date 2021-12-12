@@ -1,5 +1,5 @@
 import re
-from log import log
+# from log import log
 
 class Node:
     # Used to contain ranking information for a repository. Also has a left and right child
@@ -27,8 +27,8 @@ class Ranking:
             node  = Node(repository, score)
             self.__insert_into_tree(self.tree, node)
 
-            log.log_overall_score_calculations(repository, self.metrics, score)
-            log.log_overall_score(repository, score)
+            # log.log_overall_score_calculations(repository, self.metrics, score)
+            # log.log_overall_score(repository, score)
 
         return self.__get_ordered_list(self.tree)
 

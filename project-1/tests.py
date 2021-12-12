@@ -11,27 +11,27 @@ from metrics import BusFactorMetric, CorrectnessMetric, RampUpMetric, Responsive
 from score import Ranking 
 from main import create_list_of_repositories, find_rankings, print_results, clear_log_file
 
-def test_clear_log_file(repo):
-    # We test to see if the function "clear_log_file()" actually clears the log file. This is necessary
-    # to ensure that all logs are from the most recent run.
+# def test_clear_log_file(repo):
+#     # We test to see if the function "clear_log_file()" actually clears the log file. This is necessary
+#     # to ensure that all logs are from the most recent run.
 
-    log_file = os.environ['LOG_FILE']
-    with open(log_file, "w") as file:
-        for i in range(0, 10):
-            if i % 2:
-                file.write("This is line #" + str(i) + ".\n")
-            else:
-                file.write("\n")
+#     log_file = os.environ['LOG_FILE']
+#     with open(log_file, "w") as file:
+#         for i in range(0, 10):
+#             if i % 2:
+#                 file.write("This is line #" + str(i) + ".\n")
+#             else:
+#                 file.write("\n")
 
-    clear_log_file()
+#     clear_log_file()
 
-    with open(log_file, "r") as file:
-        lines = file.readlines()
-        if len(lines) != 0:
-            print("The log file should have 1 empty line, but it had " + str(len(lines)) + ".")
-            return False
+#     with open(log_file, "r") as file:
+#         lines = file.readlines()
+#         if len(lines) != 0:
+#             print("The log file should have 1 empty line, but it had " + str(len(lines)) + ".")
+#             return False
 
-    return True
+#     return True
 
 def test_npm_repository_name(token):
     url    = 'https://www.npmjs.com/package/express'

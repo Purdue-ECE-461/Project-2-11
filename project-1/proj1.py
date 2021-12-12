@@ -8,13 +8,13 @@ from github import Github
 from repository import Repository
 from metrics import LicenseMetric, RampUpMetric, CorrectnessMetric, BusFactorMetric, ResponsivenessMetric, DependencyMetric
 from score import Ranking 
-from log import log
+# from log import log
 import tempfile
 
-def clear_log_file():
-    log_file = os.environ['LOG_FILE']
-    with open(log_file, "w") as file:
-        file.write("")
+# def clear_log_file():
+#     log_file = os.environ['LOG_FILE']
+#     with open(log_file, "w") as file:
+#         file.write("")
 
 def create_list_of_repositories(file_name, github):
     # Accepts the file name that contains a list of repository urls. Creates a list of Repository 
@@ -22,7 +22,7 @@ def create_list_of_repositories(file_name, github):
 
     repositories = []
     with open(file_name, "r") as file:
-        log.log_url_file_read(file_name)
+        # log.log_url_file_read(file_name)
         for line in file.readlines():
             if line[-1] == "\n":
                 line = line[:-1]
@@ -31,8 +31,8 @@ def create_list_of_repositories(file_name, github):
             repo = Repository(line, github)
             repositories.append(repo)
 
-    log.log_url_file_closed(file_name)
-    log.log_repo_list_created(repositories)
+    # log.log_url_file_closed(file_name)
+    # log.log_repo_list_created(repositories)
 
     return repositories
 
@@ -63,7 +63,7 @@ def find_rankings(metrics, repositories):
     rankingObject = Ranking(metrics)
     rankings      = rankingObject.get_rankings(repositories)
 
-    log.log_final_rankings(rankings)
+    # log.log_final_rankings(rankings)
     return rankings
 
 def ranking_dict(repo):
@@ -90,7 +90,7 @@ def main(args):
     # that will be analyzed, and a list of metrics that will be used to calculate the score. 
     # Iterates through each metric to calculate each sub score for each repository. Ranks the 
     # repositories based on the total score.
-    clear_log_file()
+    # log_path = clear_log_file()
     print("in main()")
     token  = os.environ["GITHUB_TOKEN"]
     github = Github(token)
@@ -104,7 +104,7 @@ def main(args):
         LicenseMetric       ("LICENSE_SCORE"              , .1), 
         DependencyMetric    ("DEPENDENCY_SCORE"           , .2)
     ]
-    log.log_metrics_created(metrics)
+    # log.log_metrics_created(metrics)
 
     rankings      = find_rankings(metrics, repositories)
     

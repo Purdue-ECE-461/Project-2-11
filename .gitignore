@@ -5,7 +5,7 @@ project-1/__pycache__/
 .env
 ece461proj2trustmoduleregistry-53ce420a94d1.json
 service.json
-env
+env/
 sqlconnector.py
 gcloud.yaml
 requirements.txt

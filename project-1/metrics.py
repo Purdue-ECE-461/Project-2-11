@@ -4,7 +4,6 @@ import json
 
 from abc import ABC, abstractmethod
 from datetime import datetime, timedelta
-from log import log
 
 class Metric(ABC):
     # Base class for all metric classes. The method calculate_scores() calculates the normalized
@@ -23,7 +22,7 @@ class Metric(ABC):
         for repo in repositories:
             scores.append(self.calculate_score(repo))
 
-        log.log_metric_subscores_calculated(self, scores, repositories)
+        # log.log_metric_subscores_calculated(self, scores, repositories)
 
         if len(scores) == 0:
             return scores
@@ -36,7 +35,7 @@ class Metric(ABC):
         for i, score in enumerate(scores):
             scores[i] = (score - minScore) / (maxScore - minScore)
 
-        log.log_norm_metric_subscores_calculated(self, scores, repositories)
+        # log.log_norm_metric_subscores_calculated(self, scores, repositories)
         return scores
 
     @abstractmethod
@@ -50,7 +49,7 @@ class RampUpMetric(Metric):
     def calculate_score(self, repo):
         read_me_size = len(repo.read_me.split("\n"))
 
-        log.log_subscore_calculated(repo, read_me_size, self)
+        # log.log_subscore_calculated(repo, read_me_size, self)
         return read_me_size
 
 class CorrectnessMetric(Metric):
@@ -72,7 +71,7 @@ class CorrectnessMetric(Metric):
                 num_issues += self.__run_test(line, path)
 
         score = -num_issues
-        log.log_subscore_calculated(repo, score, self)
+        # log.log_subscore_calculated(repo, score, self)
         return score
 
     def __download_repository_to_local(self, repo):
@@ -92,7 +91,7 @@ class CorrectnessMetric(Metric):
         object = json.loads(line)
 
         num_issues = len(object['results'])
-        log.log_semgrep_test_results(repository_path.split("/")[1], test_name, num_issues)
+        # log.log_semgrep_test_results(repository_path.split("/")[1], test_name, num_issues)
         return num_issues
 
 class BusFactorMetric(Metric):
@@ -109,7 +108,7 @@ class BusFactorMetric(Metric):
 
         score = len(contributors.keys())
 
-        log.log_subscore_calculated(repo, score, self)
+        # log.log_subscore_calculated(repo, score, self)
         return score
  
 class ResponsivenessMetric(Metric):
@@ -122,7 +121,7 @@ class ResponsivenessMetric(Metric):
         num_dependencies       = self.__get_num_dependencies(repo)
         score = -(ave_time_issue_is_open + (num_dependencies))
         
-        log.log_subscore_calculated(repo, score, self)
+        # log.log_subscore_calculated(repo, score, self)
         return score
 
     def __get_ave_time_issue_is_open(self, repo):
@@ -142,7 +141,7 @@ class LicenseMetric(Metric):
     def calculate_score(self, repo):
         score = 1 if repo.license_name in ['MIT', 'lgpl-2.1'] else 0
         
-        log.log_subscore_calculated(repo, score, self)
+        # log.log_subscore_calculated(repo, score, self)
         return score
 
     
@@ -154,7 +153,7 @@ class DependencyMetric(Metric):
         else: 
             score = 1.0 / (num_dependencies)
 
-        log.log_subscore_calculated(repo, score, self)
+        # log.log_subscore_calculated(repo, score, self)
         return score
 
     def __get_num_dependencies(self, repo):

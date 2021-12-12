@@ -6,8 +6,6 @@ from datetime import datetime, timedelta
 from urllib.parse import urlparse
 from github import Github
 
-from log import log
-
 class Issue():
     def __init__(self, title, created_at, closed_at):
         self.title      = title
@@ -41,17 +39,17 @@ class Repository():
 
         self.scores = []
 
-        log.log_repository_created(self)
+        # log.log_repository_created(self)
 
     def __set_github_repo(self, url):
         url_components = urlparse(url)
         repo_url       = ""
         # print(url)
         if 'github' in url_components[1]:           
-            log.log_url_type(url, "github")
+            # log.log_url_type(url, "github")
             repo_url = url
         else:
-            log.log_url_type(url, "npm")
+            # log.log_url_type(url, "npm")
             
             package_name = urlparse(url)[2].split('/package/')[1]
             url          = "https://registry.npmjs.org/{}".format(package_name)
@@ -99,7 +97,7 @@ class Repository():
         results        = re.search('"dependencies": {[^}]*', text)
 
         if results == None:
-            log.log_no_dependencies(self)
+            # log.log_no_dependencies(self)
             return 0
 
         return len(results.group(0).split('"dependencies": {')[1].split(','))
@@ -108,7 +106,7 @@ class Repository():
         try:
             return self.repo.get_license().license.spdx_id
         except:
-            log.log_no_license(self)
+            # log.log_no_license(self)
             return None
     
         
