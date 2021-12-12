@@ -36,12 +36,16 @@ bucket_name: to upload to
 '''
 
 
-def uploadFiles(blob_name, byte64_data):
-    
+def uploadFiles(blob_name, file_content):
+    print(file_content)
+    with open(blob_name, "wb") as f:
+        f.write(file_content.encode('utf-8'))
+
     try:
         bucket = storage_client.get_bucket(bucket_name)
         blob = bucket.blob(blob_name)
-        blob.upload_from_filename(file_path)
+        blob.upload_from_filename(blob_name)
+        os.remove(blob_name)
         return True
     except Exception as e:
         print(e)
@@ -53,16 +57,31 @@ Downloading from bucket
 '''
 
 
-def downloadFiles(blob_name, file_path):
+def downloadFiles(blob_name):
+
     try:
         bucket = storage_client.get_bucket(bucket_name)
         blob = bucket.blob(blob_name)
-        with open(file_path, "wb") as f:
-            storage_client.download_blob_to_file(blob, f)
+        with open(blob_name+".zip", "wb") as fin:
+            storage_client.download_blob_to_file(blob, fin)
+            print("Downloaded")
+        with open(blob_name+".zip", "rb") as fin:
+            str = fin.read()
+        with open(blob_name+".zip", "wb") as fout:
+            fout.write(base64.b64decode(str))
+            
+            
 
-        return True
+        
+        return blob_name+".zip"
     except Exception as e:
         print(e)
         return False
 
+# if __name__ == "__main__":
+#     with open('proj1_3.zip', 'rb') as fin, open('pro.zip.b64', 'wb') as fout:
+#         base64.encode(fin, fout)
+#     fp = open("output.zip.b64", "rb")
+#     bytes = fp.read()
+#     uploadFiles("proj1_3", base64.b64encode(bytes))
 

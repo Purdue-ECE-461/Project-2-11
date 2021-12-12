@@ -1,4 +1,5 @@
-from flask import Flask, render_template, redirect, url_for, request, session
+from os import sendfile
+from flask import Flask, render_template, redirect, url_for, request, session, send_from_directory
 from flask_executor import Executor
 from storage import uploadFiles,downloadFiles
 from sqlconnector import connect
@@ -57,7 +58,7 @@ def updatePackage(id):
     query = "UPDATE package SET package_name = %s, version = %s, url = %s, jsprogram = %s  WHERE package_id = %s;"
     cursor.execute(query,(data['metadata']['Name'],data['metadata']['Version'],data['data']['URL'],data['data']['JSProgram'],id))
     cnx.commit()
-    return f'Updated package {id}',200
+    return 'Updated package ' + id,200
 
 @app.route('/package/<id>', methods = ['GET'])
 def packageRetrieve(id):
@@ -67,11 +68,11 @@ def packageRetrieve(id):
     if packageData.empty:
         return 'Package not found', 400
     packageData.columns = cursor.column_names
-    print(packageData)
     resp = packageData.to_json(orient='records')
     resp = resp[1:-1] #remove first and last element
     resp = "{" + resp + "}"
-    print(resp,type(resp))
+    fname = downloadFiles(packageData['package_id'][0])
+    return send_from_directory(directory = app.root_path,path=fname)
     return resp, 200
 
 @app.route('/package', methods = ['POST']) #essential
@@ -94,7 +95,7 @@ def packageCreate():
         resp = resp.to_json(orient='records')
 
         
-        executor.submit(uploadFiles,req['metadata']['ID'],)
+        uploadFiles(req['metadata']['ID'],req['data']['Content'])
         return resp[1:-1], 201
     else:
         cursor.close()
