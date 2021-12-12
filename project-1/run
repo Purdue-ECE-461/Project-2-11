@@ -23,5 +23,5 @@ then
 
 else
 	source ../env/bin/activate
-	python3 main.py $1
+	python3 proj1.py $1
 fi

@@ -1,5 +1,7 @@
+import json
 import sys
 import os
+from flask.json.tag import JSONTag
 
 from github import Github
 
@@ -63,18 +65,36 @@ def find_rankings(metrics, repositories):
     log.log_final_rankings(rankings)
     return rankings
 
-def main():
+def ranking_dict(repo):
+
+    rankings = {'ramp_up' : repo.repository.scores[0] * (0.2), 
+                'correctness' : repo.repository.scores[1] * (0.2), 
+                'bus_factor' : repo.repository.scores[2] * (0.3), 
+                'responsiveness' : repo.repository.scores[3] * (0.1),
+                'license' : repo.repository.scores[4] * (0.1),
+                'dependency' : repo.repository.scores[5] * (0.2)
+                }
+    values = rankings.values()
+    final_score = sum(values)
+    
+    rankings['score'] = final_score
+    print(rankings)
+    return rankings
+
+
+    
+
+def main(args):
     # Creates a github object used for interacting with GitHub. Creates a list of repositories
     # that will be analyzed, and a list of metrics that will be used to calculate the score. 
     # Iterates through each metric to calculate each sub score for each repository. Ranks the 
     # repositories based on the total score.
-    
     clear_log_file()
 
     token  = os.environ["GITHUB_TOKEN"]
     github = Github(token)
 
-    repositories = create_list_of_repositories(sys.argv[1], github)
+    repositories = create_list_of_repositories(args[0], github)
     metrics      = [
         RampUpMetric        ("RAMP_UP_SCORE"              , .2),
         CorrectnessMetric   ("CORRECTNESS_SCORE"          , .2),
@@ -86,9 +106,22 @@ def main():
     log.log_metrics_created(metrics)
 
     rankings      = find_rankings(metrics, repositories)
+    
+    with open('dict.txt','w') as dict_file:
+        for repo_scores in rankings:
+            scores_dict = ranking_dict(repo_scores)
+            dict_file.write(json.dumps(scores_dict))
+            dict_file.write("\n")
+    
+    # with open('dict.txt','w') as dict_file:
+    #     dict_file.write(json.dumps(scores_dict))
+
     output_string = print_results(metrics, rankings)
 
     print(output_string)
 
+
 if __name__ == "__main__":
-    main()
+    import sys
+    main(sys.argv[1:])
+    # main()

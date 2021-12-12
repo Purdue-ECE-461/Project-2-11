@@ -27,7 +27,7 @@ class Repository():
 
     def __init__(self, url, github):
         self.github = github
-
+        print("URL: " + url)
         self.__set_github_repo(url)
 
         self.num_stars         = self.__fetch_num_stars()
@@ -46,12 +46,13 @@ class Repository():
     def __set_github_repo(self, url):
         url_components = urlparse(url)
         repo_url       = ""
-
+        # print(url)
         if 'github' in url_components[1]:           
             log.log_url_type(url, "github")
             repo_url = url
         else:
             log.log_url_type(url, "npm")
+            
             package_name = urlparse(url)[2].split('/package/')[1]
             url          = "https://registry.npmjs.org/{}".format(package_name)
             response     = requests.get(url).json()
