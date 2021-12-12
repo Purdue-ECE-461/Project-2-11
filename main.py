@@ -10,6 +10,7 @@ import datetime
 import json
 from functools import wraps
 from helper import *
+import tempfile
 
 
 PROPAGATE_EXCEPTIONS = True
@@ -19,6 +20,9 @@ executor = Executor(app)
 cnx = connect()
 if not cnx:
     exit("Error connecting to database")
+
+dirpath = tempfile.mkdtemp()
+
 app.config['PROPAGATE_EXCEPTIONS'] = True
 
 app.config['TESTKEY'] = 'testkey'
@@ -49,7 +53,6 @@ def createAuthToken():
     auth = request.authorization
 
     if admin:
-        print("aaaa")
         token = jwt.encode({'user' : user_id, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, app.config['TESTKEY'])
         return jsonify({'token' : token})
 
@@ -104,9 +107,9 @@ def updatePackage(id):
     query = "UPDATE package SET package_name = %s, version = %s, url = %s, jsprogram = %s  WHERE package_id = %s;"
     cursor.execute(query,(data['metadata']['Name'],data['metadata']['Version'],data['data']['URL'],data['data']['JSProgram'],id))
 
-    write_url(data['data']['URL'])
-    run_scoring()
-    with open("dict.txt") as fptr:
+    temp_file = write_url(data['data']['URL'])
+    dict_path = run_scoring(temp_file)
+    with open(dict_path, "r") as fptr:
         dict_resp = json.loads(fptr.read())
     isIngest = ingestibilty(dict_resp)
     if (isIngest) is not True:
@@ -121,6 +124,7 @@ def updatePackage(id):
 @app.route('/package/<id>', methods = ['GET'])
 @token_required
 def packageRetrieve(id):
+    print("----------------------------------------In Package Retrieve--------------------------------------")
     cursor = cnx.cursor(buffered = True)
     cursor.execute("SELECT * FROM package WHERE package_id = %s",(id,))
     packageData = pd.DataFrame(cursor.fetchall())
@@ -154,9 +158,9 @@ def packageCreate():
         INSERT INTO package (id, package_id, package_name, version, url, jsprogram) VALUES (id,%s,%s,%s,%s,%s)""",
                 (req['metadata']['ID'],req['metadata']['Name'] , req['metadata']['Version'] , req['data']['URL'] , req['data']['JSProgram']))
         # Rate here
-        write_url(req['data']['URL'])
-        run_scoring()
-        with open("dict.txt") as fptr:
+        temp_file = write_url(req['data']['URL'])
+        dict_path = run_scoring(temp_file)
+        with open(dict_path, "r") as fptr:
             dict_resp = json.loads(fptr.read())
         isIngest = ingestibilty(dict_resp)
         if (isIngest) is not True:

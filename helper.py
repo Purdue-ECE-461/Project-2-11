@@ -1,5 +1,5 @@
 import sys
-
+import tempfile
 from numpy import true_divide
 pre_path = sys.path[0]
 sys.path.insert(0, pre_path + '/project-1/')
@@ -9,14 +9,19 @@ from proj1 import *
 
  
 
-def run_scoring():
-    main(['package_url.txt'])
+def run_scoring(path):
+    dict_path = main([path])
+    return dict_path
 
 def write_url(url):
+    # with open('package_url.txt', 'w') as url_file:
+    #     url_file.write(str(url))
+    with tempfile.NamedTemporaryFile(delete=False, mode='w') as url_file:
+        url_file.write(url)
+    
+    url_file_path = url_file.name
 
-
-    with open('package_url.txt', 'w') as url_file:
-        url_file.write(str(url))
+    return url_file_path
 
 def ingestibilty(dict):
     values = dict.values()

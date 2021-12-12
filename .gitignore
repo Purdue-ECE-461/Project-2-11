@@ -8,3 +8,4 @@ service.json
 env
 sqlconnector.py
 gcloud.yaml
+requirements.txt

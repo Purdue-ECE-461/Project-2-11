@@ -9,6 +9,7 @@ from repository import Repository
 from metrics import LicenseMetric, RampUpMetric, CorrectnessMetric, BusFactorMetric, ResponsivenessMetric, DependencyMetric
 from score import Ranking 
 from log import log
+import tempfile
 
 def clear_log_file():
     log_file = os.environ['LOG_FILE']
@@ -90,10 +91,10 @@ def main(args):
     # Iterates through each metric to calculate each sub score for each repository. Ranks the 
     # repositories based on the total score.
     clear_log_file()
-
+    print("in main()")
     token  = os.environ["GITHUB_TOKEN"]
     github = Github(token)
-
+    # print("Temp File passed: " + args[0] + "\n")
     repositories = create_list_of_repositories(args[0], github)
     metrics      = [
         RampUpMetric        ("RAMP_UP_SCORE"              , .2),
@@ -107,11 +108,12 @@ def main(args):
 
     rankings      = find_rankings(metrics, repositories)
     
-    with open('dict.txt','w') as dict_file:
-        for repo_scores in rankings:
-            scores_dict = ranking_dict(repo_scores)
-            dict_file.write(json.dumps(scores_dict))
-            dict_file.write("\n")
+    path = write_scores(rankings) 
+    # with open('dict.txt','w') as dict_file:
+    #     for repo_scores in rankings:
+    #         scores_dict = ranking_dict(repo_scores)
+    #         dict_file.write(json.dumps(scores_dict))
+    #         dict_file.write("\n")
     
     # with open('dict.txt','w') as dict_file:
     #     dict_file.write(json.dumps(scores_dict))
@@ -120,8 +122,22 @@ def main(args):
 
     print(output_string)
 
+    return path
+
+def write_scores(rankings):
+    
+    with tempfile.NamedTemporaryFile(delete=False, mode='w') as fptr:
+        for repo_scores in rankings:
+            scores_dict = ranking_dict(repo_scores)
+            fptr.write(json.dumps(scores_dict))
+            fptr.write("\n")
+    
+    file_path = fptr.name
+    print("File Path at write scores: " + file_path + "\n")
+    return file_path
 
 if __name__ == "__main__":
     import sys
-    main(sys.argv[1:])
+    print("in __main__")
+    path = main(sys.argv[1:])
     # main()
