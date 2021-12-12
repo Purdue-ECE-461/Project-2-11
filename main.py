@@ -1,5 +1,5 @@
 from os import sendfile
-from flask import Flask, render_template, redirect, url_for, request, session, send_from_directory,make_response,jsonify
+from flask import Flask, render_template, redirect, url_for, request, session, send_from_directory,make_response,jsonify,send_file
 from flask_executor import Executor
 from storage import uploadFiles,downloadFiles
 from sqlconnector import connect
@@ -12,16 +12,17 @@ from functools import wraps
 from helper import *
 
 
-
+PROPAGATE_EXCEPTIONS = True
 
 app = Flask(__name__)
 executor = Executor(app)
 cnx = connect()
 if not cnx:
     exit("Error connecting to database")
+app.config['PROPAGATE_EXCEPTIONS'] = True
 
 app.config['SECRET_KEY'] = 'testkey'
-
+app.config['TESTSECRET'] = 'testkey'
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -30,9 +31,10 @@ def token_required(f):
         if not token:
             return "Token is Missing"
 
-        try: 
-            data = jwt.decode(token, app.config['SECRET_KEY'])
-        except:
+        try:
+            data = jwt.decode(token, app.config['SECRET_KEY'],algorithms=['HS256'])
+        except Exception as e:
+            print(e)
             return "Token Invalid"
         
         return f(*args, **kwargs)
@@ -49,8 +51,8 @@ def createAuthToken():
 
     if admin:
         print("aaaa")
-        token = jwt.encode({'user' : user_id, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, app.config['SECRET_KEY'])
-        return jsonify({'token' : token.decode("UTF-8")})
+        token = jwt.encode({'user' : user_id, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, app.config['SECRET_KEY'],'HS256').decode('utf-8')
+        return jsonify({'token' : token})
 
     return "Authentication failed" , 401
 
@@ -130,7 +132,8 @@ def packageRetrieve(id):
     resp = resp[1:-1] #remove first and last element
     resp = "{" + resp + "}"
     fname = downloadFiles(packageData['package_id'][0])
-    return send_from_directory(directory = app.root_path,path=fname)
+    return send_file(fname, as_attachment=True)
+
     return resp, 200
 
 
