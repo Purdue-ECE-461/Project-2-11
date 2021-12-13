@@ -4,6 +4,7 @@
 import os
 import base64
 from google.cloud import storage
+import tempfile
 
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = r'service.json'
 storage_client = storage.Client()
@@ -38,8 +39,16 @@ bucket_name: to upload to
 
 def uploadFiles(blob_name, file_content):
     print(file_content)
-    with open(blob_name, "wb") as f:
-        f.write(file_content.encode('utf-8'))
+    # with open(blob_name, "wb") as f:
+    #     f.write(file_content.encode('utf-8'))
+
+    with tempfile.NamedTemporaryFile(delete=False, mode='wb') as fptr:
+        os.link(fptr.name, blob_name)
+        fptr.write(file_content.encode('utf-8'))
+    
+    file_path = fptr.name
+    
+    print(file_path)
 
     try:
         bucket = storage_client.get_bucket(bucket_name)
@@ -61,20 +70,28 @@ def downloadFiles(blob_name):
 
     print(blob_name)
 
+    # with tempfile.NamedTemporaryFile(delete=False, mode='wb') as fptr:
+    #     os.link(fptr.name, blob_name)
+    #     fptr.write(file_content.encode('utf-8'))
+
     try:
         bucket = storage_client.get_bucket(bucket_name)
         blob = bucket.blob(blob_name)
-        with open(blob_name+".zip", "wb") as fin:
-            storage_client.download_blob_to_file(blob, fin)
-        with open(blob_name+".zip", "rb") as fin:
-            str = fin.read()
-        with open(blob_name+".zip", "wb") as fout:
-            fout.write(base64.b64decode(str))
-            
-            
 
-        
-        return blob_name+".zip"
+        with tempfile.NamedTemporaryFile(delete=False, mode='wb') as fin:
+            storage_client.download_blob_to_file(blob, fin)
+        with open(fin.name, "rb") as fin:
+            str = fin.read()
+        with tempfile.NamedTemporaryFile(delete=False, mode='wb') as fout:
+            fout.write(base64.b64decode(str))
+        # with open(blob_name+".zip", "wb") as fin:
+        #     storage_client.download_blob_to_file(blob, fin)
+        # with open(blob_name+".zip", "rb") as fin:
+        #     str = fin.read()
+        # with open(blob_name+".zip", "wb") as fout:
+        #     fout.write(base64.b64decode(str))
+            
+        return fout.name
     except Exception as e:
         print(e)
         return False
