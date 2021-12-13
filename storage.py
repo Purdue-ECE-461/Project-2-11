@@ -43,7 +43,7 @@ def uploadFiles(blob_name, file_content):
     #     f.write(file_content.encode('utf-8'))
 
     with tempfile.NamedTemporaryFile(delete=False, mode='wb') as fptr:
-        os.link(fptr.name, blob_name)
+        os.rename(fptr.name, "/tmp/"+blob_name)
         fptr.write(file_content.encode('utf-8'))
     
     file_path = fptr.name
@@ -53,7 +53,7 @@ def uploadFiles(blob_name, file_content):
     try:
         bucket = storage_client.get_bucket(bucket_name)
         blob = bucket.blob(blob_name)
-        blob.upload_from_filename(blob_name)
+        blob.upload_from_filename("/tmp/" + blob_name)
         os.remove(blob_name)
         return True
     except Exception as e:

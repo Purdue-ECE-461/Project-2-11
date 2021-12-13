@@ -92,7 +92,7 @@ def main(args):
     # repositories based on the total score.
     # log_path = clear_log_file()
     print("in main()")
-    token  = os.environ["GITHUB_TOKEN"]
+    token  = os.environ['GITHUB_TOKEN']
     github = Github(token)
     # print("Temp File passed: " + args[0] + "\n")
     repositories = create_list_of_repositories(args[0], github)

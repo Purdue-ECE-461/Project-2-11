@@ -1,4 +1,3 @@
-from os import sendfile
 from flask import Flask, render_template, redirect, url_for, request, session, send_file,make_response,jsonify
 from flask_executor import Executor
 from storage import uploadFiles,downloadFiles
@@ -67,6 +66,8 @@ def getPackages(offset):
     query = "SELECT * FROM package ORDER BY id LIMIT %s,10;"
     cursor.execute(query,((offset-1)*10 if offset > 0 else 0,))
     resp = pd.DataFrame(cursor.fetchall())
+    if resp.empty:
+        return "No packages found"
     cnx.commit()
     resp.columns = cursor.column_names
     resp = resp.to_json(orient='records')
@@ -92,7 +93,9 @@ def deletePackage(id):
     cursor.execute("SELECT ROW_COUNT()")
     cnx.commit()
     if cursor.fetchone()[0] == 0:
+        cursor.close()
         return 'Package not found', 400
+    cursor.close()
     return 'Package Deleted',200
 
 @app.route('/package/<id>', methods = ['PUT']) 
@@ -119,6 +122,7 @@ def updatePackage(id):
     query = "UPDATE package SET ramp_up = %s, correctness = %s, bus_factor = %s, responsiveness = %s, license = %s, dependancy = %s, overall = %s  WHERE package_id = %s;"
     cursor.execute(query,(dict_resp['ramp_up'],dict_resp['correctness'],dict_resp['bus_factor'],dict_resp['responsiveness'],dict_resp['license'],dict_resp['dependency'],dict_resp['score'], data['metadata']['ID']))#dict_resp['correctness'],dict_resp['bus_factor'],dict_resp['responsiveness'],dict_resp['license'],dict_resp['dependency'],dict_resp['score'],id))    
     cnx.commit()
+    cursor.close()
     return 'Updated package ' + id,200
 
 @app.route('/package/<id>', methods = ['GET'])
@@ -129,6 +133,7 @@ def packageRetrieve(id):
     cursor.execute("SELECT * FROM package WHERE package_id = %s",(id,))
     packageData = pd.DataFrame(cursor.fetchall())
     if packageData.empty:
+        cursor.close()
         return 'Package not found', 400
     packageData.columns = cursor.column_names
     resp = packageData.to_json(orient='records')

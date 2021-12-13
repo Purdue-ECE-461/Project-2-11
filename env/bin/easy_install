@@ -1,6 +1,4 @@
-#!/bin/sh
-'''exec' "/mnt/c/Users/bbell/Desktop/ECE 461/Deploy/Project-2-11/env/bin/python3" "$0" "$@"
-' '''
+#!/Users/dhruvavish/Documents/ECE461/projrecent/Project-2-11/env/bin/python3
 # -*- coding: utf-8 -*-
 import re
 import sys
